@@ -25,6 +25,8 @@ __pycache__/
 dist/
 build/
 .eggs/
+.idea/
+*.egg-info/
 
 # Игнорировать файлы миграций (если используете Django или SQLAlchemy)
 migrations/

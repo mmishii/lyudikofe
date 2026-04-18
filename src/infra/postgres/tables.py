@@ -3,9 +3,11 @@ from datetime import datetime
 from sqlalchemy import UUID
 from sqlalchemy import String
 from sqlalchemy import Integer
+from sqlalchemy import Float
 from sqlalchemy import DateTime
-from sqlalchemy import Boolean
+from sqlalchemy import ForeignKey
 from sqlalchemy import func
+from sqlalchemy import Text
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from typing import Annotated
 
@@ -51,49 +53,60 @@ class BaseDBModel(DeclarativeBase):
 # Пользователь 
 class UsersModel(BaseDBModel):
     __tablename__ = 'users'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    id: Mapped[uuid_pk]
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
 # Статус
 class StatusesModel(BaseDBModel):
     __tablename__ = 'statuses'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
+    
+    name: Mapped[str] = mapped_column(
+        String(255),
         nullable=False,
-        default=uuid.uuid4,
-    )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
+        primary_key=True,)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
 # Заказ
 class OrdersModel(BaseDBModel):
     __tablename__ = 'orders'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.users.id"),
         nullable=False,
     )
-    status_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
+    status: Mapped[str] = mapped_column(
+        String(255),        
+        ForeignKey("db_schema.statuses.name"),
         nullable=False,
     )
-    price: Mapped[float] = mapped_column(nullable=False)
-    comment: Mapped[str] = mapped_column(String(255), nullable=True)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    comment: Mapped[str] = mapped_column(Text, nullable=True)
     payment_method: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+# Закз продуктов
+class OrderProductsModel(BaseDBModel):
+    __tablename__ = 'order_products'
+    id: Mapped[uuid_pk]
+    order_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.orders.id"),
+        nullable=False,
+    )
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
+        nullable=False,
+    )
+    unit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
@@ -101,19 +114,17 @@ class OrdersModel(BaseDBModel):
 # Кастомные
 class CustomsModel(BaseDBModel):
     __tablename__ = 'customs'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     ingredient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.ingredients.id"),
         nullable=False,
     )
-    order_product: Mapped[uuid.UUID] = mapped_column(
+    order_product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.orders.id"),
         nullable=False,
+        
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
@@ -122,14 +133,10 @@ class CustomsModel(BaseDBModel):
 # Изображения
 class ImagesModel(BaseDBModel):
     __tablename__ = 'images'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
         nullable=False,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -139,21 +146,19 @@ class ImagesModel(BaseDBModel):
 # Напитки
 class DrinksModel(BaseDBModel):
     __tablename__ = 'drinks'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     price: Mapped[float] = mapped_column(nullable=False)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
-    season: Mapped[str] = mapped_column(String(100), nullable=True)
-    category: Mapped[str] = mapped_column(String(100), nullable=True)
+    season: Mapped[str] = mapped_column(String(100),
+        ForeignKey("db_schema.seasons.name"), nullable=True)
+    category: Mapped[str] = mapped_column(String(100), 
+        ForeignKey("db_schema.categories.name"), nullable=True)
     volume: Mapped[int] = mapped_column(nullable=True)
     macros_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.macros.id"),
         nullable=True,
     )
     created_at: Mapped[created_at]
@@ -162,13 +167,10 @@ class DrinksModel(BaseDBModel):
 # Сезоны
 class SeasonsModel(BaseDBModel):
     __tablename__ = 'seasons'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
+    name: Mapped[str] = mapped_column(
+        String(255),
         nullable=False,
-        default=uuid.uuid4,
-    )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
+        primary_key=True,)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
@@ -176,25 +178,17 @@ class SeasonsModel(BaseDBModel):
 # Категории
 class CategoriesModel(BaseDBModel):
     __tablename__ = 'categories'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
+    name: Mapped[str] = mapped_column(
+        String(255),
         nullable=False,
-        default=uuid.uuid4,
-    )
-    name: Mapped[str] = mapped_column(String(255), nullable=False)
+        primary_key=True,)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
 # кбжу
 class MacrosModel(BaseDBModel):
     __tablename__ = 'macros'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     unit_kkal: Mapped[float] = mapped_column(nullable=False)
     unit_proteins: Mapped[float] = mapped_column(nullable=False)
     unit_carbs: Mapped[float] = mapped_column(nullable=False)
@@ -205,19 +199,35 @@ class MacrosModel(BaseDBModel):
 # Еда
 class FoodModel(BaseDBModel):
     __tablename__ = 'food'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
     price: Mapped[float] = mapped_column(nullable=False)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
-    category: Mapped[str] = mapped_column(String(100), nullable=True)
+    category: Mapped[str] = mapped_column(String(100),
+        ForeignKey("db_schema.categories.name"), nullable=True)
     macros_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.macros.id"),
+        nullable=True,
+    )
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+# Ингредиенты
+class IngredientsModel(BaseDBModel):
+    __tablename__ = 'ingredients'
+    id: Mapped[uuid_pk]
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(String, nullable=True)
+    price: Mapped[float] = mapped_column(nullable=False)
+    is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
+    category: Mapped[str] = mapped_column(String(100),
+        ForeignKey("db_schema.categories.name"), nullable=True)
+    macros_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.macros.id"),
         nullable=True,
     )
     created_at: Mapped[created_at]
@@ -226,20 +236,19 @@ class FoodModel(BaseDBModel):
 
 # Избранные кастомные напитки
 class FavoriteCostumesModel(BaseDBModel):
-    __tablename__ = 'favorit_customs'
-    id: Mapped[uuid.UUID] = mapped_column(
+   
+    __tablename__ = 'favorite_customs'
+    id: Mapped[uuid_pk]
+    ingredient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        primary_key=True,
+        ForeignKey("db_schema.ingredients.id"),
         nullable=False,
-        default=uuid.uuid4,
     )
     favorite_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.favorite.id"),
         nullable=False,
-    )
-    ingredient_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        nullable=False,
+        
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
@@ -248,18 +257,15 @@ class FavoriteCostumesModel(BaseDBModel):
 # Избранное
 class FavoriteModel(BaseDBModel):
     __tablename__ = 'favorite'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.users.id"),
         nullable=False,
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
         nullable=False,
     )
     created_at: Mapped[created_at]
@@ -269,14 +275,10 @@ class FavoriteModel(BaseDBModel):
 # Корзина
 class CartModel(BaseDBModel):
     __tablename__ = 'cart'
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True),
-        primary_key=True,
-        nullable=False,
-        default=uuid.uuid4,
-    )
+    id: Mapped[uuid_pk]
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("db_schema.users.id"),
         nullable=False,
     )
     created_at: Mapped[created_at]

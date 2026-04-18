@@ -14,8 +14,8 @@
 📦 Как запустить проект
 1. Склонируйте проект
    ```
-   git clone https://github.com/LizaG000/base-fast-api.git
-   cd base-fast-api
+   git clone https://github.com/LizaG000/lyudikofe.git
+   cd lyudikofe
    ```
 
 3. Создайте файл окружения config.toml
@@ -106,8 +106,8 @@
    
 Если ты ещё не скачивал проект:
 ```
-git clone https://github.com/LizaG000/base-fast-api.git
-cd base-fast-api
+git clone https://github.com/LizaG000/lyudikofe.git
+cd lyudikofe
 ```
 
 2. Создаём новую ветку
