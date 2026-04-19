@@ -5,11 +5,15 @@ from dishka import provide
 from dishka import provide_all
 from fastapi import Request
 
+from src.application.services.pagination import Pagination
 from src.config import Config
 from src.config import ApiConfig
 from src.config import DatabaseConfig
 
-from src.usecase.users.create import CreateUserUsecase
+from src.usecase.drinks.get import GetDrinksUsecase
+from src.usecase.drinks.create import CreateDrinkUsecase 
+from src.usecase.categories.create import CreateCategoryUsecase
+from src.usecase.seazons.create import CreateSeasonUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -27,6 +31,10 @@ class MainProvider(Provider):
     _request = from_context(provides=Request, scope=Scope.REQUEST)
 
     _get_usecases = provide_all(
-        CreateUserUsecase,
+        Pagination,
+        GetDrinksUsecase,
+        CreateDrinkUsecase,
+        CreateCategoryUsecase,
+        CreateSeasonUsecase
     )
 

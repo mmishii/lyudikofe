@@ -9,6 +9,7 @@ from sqlalchemy import Select
 from sqlalchemy.sql.dml import ReturningInsert, ReturningUpdate
 from typing import TypeVar, Generic, Type
 TAppliable = Select | ReturningInsert | ReturningUpdate
+from src.application.errors import NotFoundError, DatabaseCreateError, DatabaseUpdateError, DatabaseDeleteError
 
 TTable = TypeVar('TTable', bound=BaseDBModel)
 TEntity = TypeVar('TEntity', bound=BaseModel)
@@ -67,6 +68,8 @@ class CreateReturningGate(Generic[TTable, TCreate, TEntity], PostgresGateway):
 
     async def __call__(self, entity: TCreate) -> TEntity:
         stmt = insert(self.table).values(**entity.model_dump()).returning(self.table)
+        result = (await self.session.execute(stmt)).scalar_one().__dict__
+        return self.schema_type.model_validate(result)
         try:
             result = (await self.session.execute(stmt)).scalar_one().__dict__
             return self.schema_type.model_validate(result)
