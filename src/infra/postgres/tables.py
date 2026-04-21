@@ -149,13 +149,11 @@ class DrinksModel(BaseDBModel):
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    price: Mapped[float] = mapped_column(nullable=False)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
     season: Mapped[str] = mapped_column(String(100),
         ForeignKey("db_schema.seasons.name"), nullable=True)
     category: Mapped[str] = mapped_column(String(100), 
         ForeignKey("db_schema.categories.name"), nullable=True)
-    volume: Mapped[int] = mapped_column(nullable=True)
     macros_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.macros.id"),
@@ -163,6 +161,21 @@ class DrinksModel(BaseDBModel):
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
+
+#Price
+class PricesModel(BaseDBModel):
+    __tablename__ = 'prices'
+    id: Mapped[uuid_pk]
+    product_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or "db_schema.ingredients.id"),
+        nullable=False,
+    )
+    price: Mapped[float] = mapped_column(nullable=False)
+    volume: Mapped[int] = mapped_column(nullable=True)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
 
 # Сезоны
 class SeasonsModel(BaseDBModel):
