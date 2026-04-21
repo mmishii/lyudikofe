@@ -1,7 +1,7 @@
 # Игнорировать файлы виртуального окружения
 venv/
 env/
-deploy/
+deploy/*
 makefile
 
 # Ignore dynaconf secret files
