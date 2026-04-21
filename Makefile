@@ -1,9 +1,9 @@
 compose:
-	docker compose -f deploy/docker-compose.yml up --build -d
-	docker exec -it deploy-backend-1 alembic upgrade head
+	docker-compose -f deploy/docker-compose.yml up --build -d
+	docker exec -it deploy_backend_1 alembic upgrade head
 
 down:
-	docker compose -f deploy/docker-compose.yml down
+	docker-compose -f deploy/docker-compose.yml down
 
 migrations_init:
 	docker exec -it deploy-backend-1 alembic revision --autogenerate -m "init"
