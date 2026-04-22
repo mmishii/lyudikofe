@@ -1,20 +1,22 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from src.infra.postgres.gateways.base import CreateReturningGate
-from src.usecase.drinks.schemas import RequestDrink, ResponseDrink
+from src.usecase.food.schemas import ResponseFood, RequestFood,ApiPriceSchema
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
-from src.application.schemas.drinks import CreateDrinkSchema, DrinkSchema
-from src.infra.postgres.tables import MacrosModel, DrinksModel
+from src.application.schemas.food import FoodSchema, CreateFoodSchema
+from src.application.schemas.prices import CreatePriceSchema
+from src.infra.postgres.tables import MacrosModel, FoodModel, PricesModel
 from dataclasses import dataclass
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
+class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
     session: AsyncSession
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
-    create_drink: CreateReturningGate[DrinksModel, CreateDrinkSchema, DrinkSchema]
+    create_food: CreateReturningGate[FoodModel, CreateFoodSchema, FoodSchema]
+    create_price: CreateReturningGate[PricesModel, CreatePriceSchema, ApiPriceSchema]
 
-    async def __call__(self, data: RequestDrink) -> ResponseDrink:
+    async def __call__(self, data: RequestFood) -> ResponseFood:
         async with self.session.begin():
             macros = await self.create_macros(CreateMacrosSchema(
                 unit_kkal=data.unit_kkal,
@@ -23,32 +25,35 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
                 unit_fats=data.unit_fats
             ))
 
-            drink = await self.create_drink(CreateDrinkSchema(
+            food = await self.create_food(CreateFoodSchema(
                 name=data.name,
                 description=data.description,
-                price=data.price,
                 is_available=data.is_available,
                 category=data.category,
-                season=data.season,
                 macros_id=macros.id,
-                volume=data.volume
             ))
+            prices = []
+            for price in data.prices:
+                result = await self.create_price(CreatePriceSchema(
+                    food_id=food.id,
+                    price=price.price,
+                    volume=price.volume,
+                ))
+                prices.append(result)
 
-        return ResponseDrink(
-            id=drink.id,
-            name=drink.name,
-            description=drink.description,
-            price=drink.price,
-            is_available=drink.is_available,
-            category=drink.category,
-            season=drink.season,
-            macros_id=drink.macros_id,
-            volume=drink.volume,
+        return ResponseFood(
+            id=food.id,
+            name=food.name,
+            description=food.description,
+            is_available=food.is_available,
+            prices=prices,
+            category=food.category,
+            macros_id=food.macros_id,
             unit_kkal=macros.unit_kkal,
             unit_proteins=macros.unit_proteins,
             unit_carbs=macros.unit_carbs,
             unit_fats=macros.unit_fats,
-            created_at=drink.created_at,
-            updated_at=drink.updated_at,
+            created_at=food.created_at,
+            updated_at=food.updated_at,
         )
 

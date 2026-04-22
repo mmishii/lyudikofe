@@ -1,0 +1,36 @@
+from pydantic import BaseModel
+from uuid import UUID
+from datetime import datetime
+
+class ApiPriceSchema(BaseModel):
+    volume: int
+    price: float
+
+
+class RequestFood(BaseModel):
+    name: str
+    description: str|None = None
+    ingredients: str|None = None
+    prices: list[ApiPriceSchema]
+    is_available: bool
+    category: str|None = None
+    unit_kkal: float
+    unit_proteins: float
+    unit_carbs: float
+    unit_fats: float
+
+class ResponseFood(BaseModel):
+    id: UUID
+    name: str
+    description: str|None = None
+    ingredients: str|None = None
+    prices: list[ApiPriceSchema]
+    is_available: bool
+    category: str|None = None
+    macros_id: UUID
+    unit_kkal: float
+    unit_proteins: float
+    unit_carbs: float
+    unit_fats: float
+    created_at: datetime
+    updated_at: datetime

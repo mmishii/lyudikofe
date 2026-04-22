@@ -11,7 +11,8 @@ from src.config import ApiConfig
 from src.config import DatabaseConfig
 
 from src.usecase.drinks.get import GetDrinksUsecase
-from src.usecase.drinks.create import CreateDrinkUsecase 
+from src.usecase.drinks.create import CreateDrinkUsecase
+from src.usecase.food.create import CreateFoodUsecase
 from src.usecase.categories.create import CreateCategoryUsecase
 from src.usecase.seazons.create import CreateSeasonUsecase
 
@@ -35,6 +36,7 @@ class MainProvider(Provider):
         GetDrinksUsecase,
         CreateDrinkUsecase,
         CreateCategoryUsecase,
-        CreateSeasonUsecase
+        CreateSeasonUsecase,
+        CreateFoodUsecase
     )
 

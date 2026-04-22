@@ -35,7 +35,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
             prices = []
             for price in data.prices:
                 result = await self.create_price(CreatePriceSchema(
-                    product_id=drink.id,
+                    drink_id=drink.id,
                     price=price.price,
                     volume=price.volume,
                 ))

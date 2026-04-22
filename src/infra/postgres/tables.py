@@ -100,11 +100,17 @@ class OrderProductsModel(BaseDBModel):
         ForeignKey("db_schema.orders.id"),
         nullable=False,
     )
-    product_id: Mapped[uuid.UUID] = mapped_column(
+    drink_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
-        nullable=False,
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
     )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
+    )
+
     unit_price: Mapped[float] = mapped_column(Float, nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[created_at]
@@ -134,10 +140,16 @@ class CustomsModel(BaseDBModel):
 class ImagesModel(BaseDBModel):
     __tablename__ = 'images'
     id: Mapped[uuid_pk]
-    product_id: Mapped[uuid.UUID] = mapped_column(
+
+    drink_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
-        nullable=False,
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
+    )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[created_at]
@@ -149,6 +161,7 @@ class DrinksModel(BaseDBModel):
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
+    ingredients: Mapped[str] = mapped_column(String, nullable=True)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
     season: Mapped[str] = mapped_column(String(100),
         ForeignKey("db_schema.seasons.name"), nullable=True)
@@ -166,10 +179,16 @@ class DrinksModel(BaseDBModel):
 class PricesModel(BaseDBModel):
     __tablename__ = 'prices'
     id: Mapped[uuid_pk]
-    product_id: Mapped[uuid.UUID] = mapped_column(
+
+    drink_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or "db_schema.ingredients.id"),
-        nullable=False,
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
+    )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
     )
     price: Mapped[float] = mapped_column(nullable=False)
     volume: Mapped[int] = mapped_column(nullable=True)
@@ -215,7 +234,7 @@ class FoodModel(BaseDBModel):
     id: Mapped[uuid_pk]
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     description: Mapped[str] = mapped_column(String, nullable=True)
-    price: Mapped[float] = mapped_column(nullable=False)
+    ingredients: Mapped[str] = mapped_column(String, nullable=True)
     is_available: Mapped[bool] = mapped_column(nullable=False, default=True)
     category: Mapped[str] = mapped_column(String(100),
         ForeignKey("db_schema.categories.name"), nullable=True)
@@ -276,10 +295,16 @@ class FavoriteModel(BaseDBModel):
         ForeignKey("db_schema.users.id"),
         nullable=False,
     )
-    product_id: Mapped[uuid.UUID] = mapped_column(
+    
+    drink_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.drinks.id" or "db_schema.foods.id" or"db_schema.ingredients.id"),
-        nullable=False,
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
+    )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]

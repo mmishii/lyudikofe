@@ -9,11 +9,12 @@ class ApiPriceSchema(BaseModel):
 
 class RequestDrink(BaseModel):
     name: str
-    description: str
+    description: str|None = None
+    ingredients: str|None = None
     prices: list[ApiPriceSchema]
     is_available: bool
-    category: str
-    season: str
+    category: str|None = None
+    season: str|None = None
     unit_kkal: float
     unit_proteins: float
     unit_carbs: float
@@ -22,11 +23,12 @@ class RequestDrink(BaseModel):
 class ResponseDrink(BaseModel):
     id: UUID
     name: str
-    description: str
+    description: str|None = None
+    ingredients: str|None = None
     prices: list[ApiPriceSchema]
     is_available: bool
-    category: str
-    season: str
+    category: str|None = None
+    season: str|None = None
     macros_id: UUID
     unit_kkal: float
     unit_proteins: float
