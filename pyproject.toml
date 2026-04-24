@@ -32,7 +32,8 @@ dependencies = [
     "markupsafe (>=3.0.2,<4.0.0)",
     "psycopg (>=3.2.9,<4.0.0)",
     "psycopg-binary (>=3.2.9,<4.0.0)",
-    "sqlalchemy (>=2.0.41,<3.0.0)"
+    "sqlalchemy (>=2.0.41,<3.0.0)",
+    "aioboto3 (>=15.5.0,<16.0.0)"
 ]
 
 

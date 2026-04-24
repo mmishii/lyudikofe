@@ -5,7 +5,9 @@ from src.usecase.food.schemas import ResponseFood, RequestFood,ApiPriceSchema
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
 from src.application.schemas.food import FoodSchema, CreateFoodSchema
 from src.application.schemas.prices import CreatePriceSchema
-from src.infra.postgres.tables import MacrosModel, FoodModel, PricesModel
+from src.application.schemas.images import CreateImageSchema, ImageSchema
+from src.infra.postgres.tables import MacrosModel, FoodModel, PricesModel, ImagesModel
+from src.infra.minio.get import GetImg
 from dataclasses import dataclass
 
 
@@ -15,6 +17,8 @@ class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
     create_food: CreateReturningGate[FoodModel, CreateFoodSchema, FoodSchema]
     create_price: CreateReturningGate[PricesModel, CreatePriceSchema, ApiPriceSchema]
+    create_image: CreateReturningGate[ImagesModel, CreateImageSchema, ImageSchema]
+    get_img: GetImg
 
     async def __call__(self, data: RequestFood) -> ResponseFood:
         async with self.session.begin():
@@ -32,6 +36,11 @@ class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
                 category=data.category,
                 macros_id=macros.id,
             ))
+            image = await self.create_image(CreateImageSchema(
+                name=data.image_name,
+                drink_id=food.id,
+            ))
+            image_url = await self.get_img(image.name)
             prices = []
             for price in data.prices:
                 result = await self.create_price(CreatePriceSchema(
@@ -47,6 +56,7 @@ class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
             description=food.description,
             is_available=food.is_available,
             prices=prices,
+            image_url=image_url,
             category=food.category,
             macros_id=food.macros_id,
             unit_kkal=macros.unit_kkal,

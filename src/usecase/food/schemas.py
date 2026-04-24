@@ -13,6 +13,7 @@ class RequestFood(BaseModel):
     ingredients: str|None = None
     prices: list[ApiPriceSchema]
     is_available: bool
+    image_name: str
     category: str|None = None
     unit_kkal: float
     unit_proteins: float
@@ -27,6 +28,7 @@ class ResponseFood(BaseModel):
     prices: list[ApiPriceSchema]
     is_available: bool
     category: str|None = None
+    image_url: str
     macros_id: UUID
     unit_kkal: float
     unit_proteins: float

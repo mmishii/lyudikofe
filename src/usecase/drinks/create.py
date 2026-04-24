@@ -5,7 +5,9 @@ from src.usecase.drinks.schemas import RequestDrink, ResponseDrink, ApiPriceSche
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
 from src.application.schemas.drinks import CreateDrinkSchema, DrinkSchema
 from src.application.schemas.prices import CreatePriceSchema
-from src.infra.postgres.tables import MacrosModel, DrinksModel, PricesModel
+from src.application.schemas.images import CreateImageSchema, ImageSchema
+from src.infra.postgres.tables import MacrosModel, DrinksModel, PricesModel, ImagesModel
+from src.infra.minio.get import GetImg
 from dataclasses import dataclass
 
 @dataclass(slots=True, frozen=True, kw_only=True)
@@ -14,7 +16,9 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
     create_drink: CreateReturningGate[DrinksModel, CreateDrinkSchema, DrinkSchema]
     create_price: CreateReturningGate[PricesModel, CreatePriceSchema, ApiPriceSchema]
-    
+    create_image: CreateReturningGate[ImagesModel, CreateImageSchema, ImageSchema]
+    get_img: GetImg
+
     async def __call__(self, data: RequestDrink) -> ResponseDrink:
         async with self.session.begin():
             macros = await self.create_macros(CreateMacrosSchema(
@@ -32,6 +36,11 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
                 season=data.season,
                 macros_id=macros.id,
             ))
+            image = await self.create_image(CreateImageSchema(
+                name=data.image_name,
+                drink_id=drink.id,
+            ))
+            image_url = await self.get_img(image.name)
             prices = []
             for price in data.prices:
                 result = await self.create_price(CreatePriceSchema(
@@ -49,6 +58,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
             prices=prices,
             is_available=drink.is_available,
             category=drink.category,
+            image_url=image_url,
             season=drink.season,
             macros_id=drink.macros_id,
             unit_kkal=macros.unit_kkal,

@@ -15,6 +15,7 @@ from src.usecase.drinks.create import CreateDrinkUsecase
 from src.usecase.food.create import CreateFoodUsecase
 from src.usecase.categories.create import CreateCategoryUsecase
 from src.usecase.seazons.create import CreateSeasonUsecase
+from src.infra.minio.get import GetImg
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -37,6 +38,7 @@ class MainProvider(Provider):
         CreateDrinkUsecase,
         CreateCategoryUsecase,
         CreateSeasonUsecase,
-        CreateFoodUsecase
+        CreateFoodUsecase,
+        GetImg,
     )
 
