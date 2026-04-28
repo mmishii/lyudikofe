@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from src.infra.postgres.gateways.base import CreateReturningGate
-from src.usecase.food.schemas import ResponseFood, RequestFood,ApiPriceSchema
+from src.usecase.food.schemas import ResponseAllFood, RequestFood,ApiPriceSchema
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
 from src.application.schemas.food import FoodSchema, CreateFoodSchema
 from src.application.schemas.prices import CreatePriceSchema
@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
+class CreateFoodUsecase(Usecase[RequestFood, ResponseAllFood]):
     session: AsyncSession
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
     create_food: CreateReturningGate[FoodModel, CreateFoodSchema, FoodSchema]
@@ -20,7 +20,7 @@ class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
     create_image: CreateReturningGate[ImagesModel, CreateImageSchema, ImageSchema]
     get_img: GetImg
 
-    async def __call__(self, data: RequestFood) -> ResponseFood:
+    async def __call__(self, data: RequestFood) -> ResponseAllFood:
         async with self.session.begin():
             macros = await self.create_macros(CreateMacrosSchema(
                 unit_kkal=data.unit_kkal,
@@ -50,7 +50,7 @@ class CreateFoodUsecase(Usecase[RequestFood, ResponseFood]):
                 ))
                 prices.append(result)
 
-        return ResponseFood(
+        return ResponseAllFood(
             id=food.id,
             name=food.name,
             description=food.description,

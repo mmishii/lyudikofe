@@ -1,11 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from dataclasses import dataclass
-from src.infra.postgres.tables import DrinksModel, MacrosModel
-from src.usecase.drinks.schemas import ResponseDrink
-from sqlalchemy import select, and_, func
-from src.application.services.pagination import Pagination
+from src.infra.postgres.tables import DrinksModel, MacrosModel, PricesModel, ImagesModel
+from src.usecase.drinks.schemas import ResponseDrink, ResponseAllDrink
+from sqlalchemy import select, func, literal
 from src.application.errors import NotFoundError
-from src.application.schemas.common import ResponsePaginationSchema
+from uuid import UUID
 
 @dataclass(slots=True, kw_only=True)
 class PostgresGateway:
@@ -13,29 +12,60 @@ class PostgresGateway:
 
 @dataclass(slots=True, kw_only=True)
 class GetDrinksGateway(PostgresGateway):
-    pagination: Pagination
-    async def __call__(self, limit: int, offset: int) -> ResponsePaginationSchema[ResponseDrink]:
+    async def __call__(self, category: str) -> list[ResponseDrink]:
         stmt = (select(
                 DrinksModel.id,
                 DrinksModel.name,
                 DrinksModel.description,
-                DrinksModel.price,
+                DrinksModel.ingredients,
                 DrinksModel.is_available,
                 DrinksModel.category,
                 DrinksModel.season,
-                DrinksModel.macros_id,
-                DrinksModel.volume,
-                MacrosModel.unit_kkal,
-                MacrosModel.unit_proteins,
-                MacrosModel.unit_carbs,
-                MacrosModel.unit_fats,
+                func.concat(
+                    PricesModel.price,
+                    PricesModel.volume
+                ).label('price'),
                 DrinksModel.created_at,
                 DrinksModel.updated_at
             )
-            .join(MacrosModel, MacrosModel.id == DrinksModel.macros_id))
+            .join(PricesModel, PricesModel.drink_id == DrinksModel.id)
+            .where(DrinksModel.category==category))
+
+
         result = (await self.session.execute(stmt)).mappings().fetchall()
         if result is None:
             raise NotFoundError(table=DrinksModel)
-        result = [ResponseDrink.model_validate(row) for row in result]
-        return self.pagination(result, limit, offset, ResponseDrink)
+        return [ResponseDrink.model_validate(row) for row in result]
     
+
+@dataclass(slots=True, kw_only=True)
+class GetDrinksByIdGateway(PostgresGateway):
+    async def __call__(self, data_id: UUID) -> ResponseAllDrink:
+        stmt = (select(
+                DrinksModel.id,
+                DrinksModel.name,
+                DrinksModel.description,
+                DrinksModel.ingredients,
+                DrinksModel.is_available,
+                DrinksModel.category,
+                DrinksModel.season,
+                MacrosModel.unit_kkal,
+                MacrosModel.unit_fats,
+                MacrosModel.unit_carbs,
+                MacrosModel.unit_proteins,
+                func.concat(
+                    PricesModel.price,
+                    PricesModel.volume
+                ).label('price'),
+                DrinksModel.created_at,
+                DrinksModel.updated_at
+            )
+            .join(PricesModel, PricesModel.drink_id == DrinksModel.id)
+            .join(MacrosModel, MacrosModel.id == DrinksModel.macros_id)
+                .where(DrinksModel.id == data_id))
+
+
+        result = (await self.session.execute(stmt)).mappings().fetchone()
+        if result is None:
+            raise NotFoundError(table=DrinksModel)
+        return ResponseAllDrink.model_validate(result)

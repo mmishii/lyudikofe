@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from src.infra.postgres.gateways.base import CreateReturningGate
-from src.usecase.drinks.schemas import RequestDrink, ResponseDrink, ApiPriceSchema
+from src.usecase.drinks.schemas import RequestDrink, ResponseAllDrink, ApiPriceSchema
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
 from src.application.schemas.drinks import CreateDrinkSchema, DrinkSchema
 from src.application.schemas.prices import CreatePriceSchema
@@ -11,7 +11,7 @@ from src.infra.minio.get import GetImg
 from dataclasses import dataclass
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
+class CreateDrinkUsecase(Usecase[RequestDrink, ResponseAllDrink]):
     session: AsyncSession
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
     create_drink: CreateReturningGate[DrinksModel, CreateDrinkSchema, DrinkSchema]
@@ -19,7 +19,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
     create_image: CreateReturningGate[ImagesModel, CreateImageSchema, ImageSchema]
     get_img: GetImg
 
-    async def __call__(self, data: RequestDrink) -> ResponseDrink:
+    async def __call__(self, data: RequestDrink) -> ResponseAllDrink:
         async with self.session.begin():
             macros = await self.create_macros(CreateMacrosSchema(
                 unit_kkal=data.unit_kkal,
@@ -51,7 +51,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseDrink]):
                 prices.append(result)
 
 
-        return ResponseDrink(
+        return ResponseAllDrink(
             id=drink.id,
             name=drink.name,
             description=drink.description,

@@ -28,11 +28,15 @@ class ResponseFood(BaseModel):
     prices: list[ApiPriceSchema]
     is_available: bool
     category: str|None = None
-    image_url: str
+    image_url: str|None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+
+class ResponseAllFood(ResponseFood):
     macros_id: UUID
     unit_kkal: float
     unit_proteins: float
     unit_carbs: float
     unit_fats: float
-    created_at: datetime
-    updated_at: datetime

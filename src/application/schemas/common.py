@@ -16,7 +16,11 @@ class BaseSchema(BaseModel):
 class PaginationSchema(BaseModel):
     offset: int
     limit: int
-   
+
+
+class RequestPaginationSchema(PaginationSchema):
+    category: str
+
 T = TypeVar('T', bound=BaseModel)
 
 class ResponsePaginationSchema(BaseSchema, Generic[T]):
