@@ -13,12 +13,14 @@ from src.config import DatabaseConfig
 from src.usecase.drinks.get import GetDrinksUsecase
 from src.usecase.drinks.create import CreateDrinkUsecase
 from src.usecase.drinks.get_one import GetDrinkByIdUsecase
+from src.usecase.food.get_one import GetFoodByIdUsecase
 from src.usecase.food.create import CreateFoodUsecase
 from src.usecase.food.get import GetFoodUsecase
 from src.usecase.categories.create import CreateCategoryUsecase
 from src.usecase.seazons.create import CreateSeasonUsecase
 from src.infra.minio.get import GetImg
 from src.usecase.ingredients.get import GetIngredientsUsecase
+from src.usecase.ingredients.get_one import GetIngredientByIdUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -46,5 +48,7 @@ class MainProvider(Provider):
         GetFoodUsecase,
         GetIngredientsUsecase,
         GetDrinkByIdUsecase,
+        GetFoodByIdUsecase,
+        GetIngredientByIdUsecase,
     )
 

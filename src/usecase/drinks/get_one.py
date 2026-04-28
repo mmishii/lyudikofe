@@ -14,7 +14,6 @@ from src.infra.minio.get import GetImg
 class GetDrinkByIdUsecase(Usecase[UUID, ResponseOneDrink]):
     session: AsyncSession
     get_drink: GetDrinksByIdGateway
-    pagination: Pagination[ResponseDrink]
     get_img_url: GetImageNameGateway
     get_img: GetImg
 

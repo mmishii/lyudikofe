@@ -35,7 +35,7 @@ class GetIngredientsGateway(PostgresGateway):
 
 @dataclass(slots=True, kw_only=True)
 class GetIngredientByIdGateway(PostgresGateway):
-    async def __call__(self, data_id: UUID) -> list[ResponseAllIngredients]:
+    async def __call__(self, data_id: UUID) -> ResponseAllIngredients:
         stmt = (select(
             IngredientsModel.id,
             IngredientsModel.name,
@@ -60,4 +60,4 @@ class GetIngredientByIdGateway(PostgresGateway):
         result = (await self.session.execute(stmt)).mappings().fetchone()
         if result is None:
             raise NotFoundError(table=IngredientsModel)
-        return [ResponseAllIngredients.model_validate(row) for row in result]
+        return ResponseAllIngredients.model_validate(result)
