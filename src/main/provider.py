@@ -10,6 +10,8 @@ from src.config import Config
 from src.config import ApiConfig
 from src.config import DatabaseConfig
 
+from src.usecase.users.create import CreateUserUsecase
+from src.usecase.users.get import GetUserUsecase
 from src.usecase.drinks.get import GetDrinksUsecase
 from src.usecase.drinks.create import CreateDrinkUsecase
 from src.usecase.drinks.get_one import GetDrinkByIdUsecase
@@ -38,6 +40,8 @@ class MainProvider(Provider):
     _request = from_context(provides=Request, scope=Scope.REQUEST)
 
     _get_usecases = provide_all(
+        CreateUserUsecase,
+        GetUserUsecase,
         Pagination,
         GetDrinksUsecase,
         CreateDrinkUsecase,

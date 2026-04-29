@@ -57,6 +57,12 @@ class UsersModel(BaseDBModel):
     name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,)
+    email: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,)
+    phone: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
