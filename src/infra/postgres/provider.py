@@ -172,6 +172,6 @@ class PostgresProvider(Provider):
         GetIngredientsGateway,
         GetDrinksByIdGateway,
         GetFoodsByIdGateway,
-        GetDrinksByIdGateway
-
+        GetDrinksByIdGateway,
+        GetIngredientByIdGateway,
     )
