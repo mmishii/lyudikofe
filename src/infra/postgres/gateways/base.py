@@ -41,7 +41,7 @@ class GetByIdGate(Generic[TTable, TEntityId, TEntity], PostgresGateway):
     entity_id: Type[TEntityId]
 
     async def __call__(self, id = TEntityId) -> TEntity:
-        stmt = select(*self.table.group_by_fields()).where(self.table.id == id)
+        stmt = Select(*self.table.group_by_fields()).where(self.table.id == id)
         result = (await self.session.execute(stmt)).mappings().fetchone()
         print(result)
         if result is None:
