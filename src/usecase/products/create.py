@@ -1,25 +1,25 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from src.infra.postgres.gateways.base import CreateReturningGate
-from src.usecase.drinks.schemas import RequestDrink, ResponseAllDrink, ApiPriceSchema
+from src.usecase.products.schemas import ResponseProduct, ApiPriceSchema, RequestProduct
 from src.application.schemas.macros import CreateMacrosSchema, MacrosSchema
-from src.application.schemas.drinks import CreateDrinkSchema, DrinkSchema
+from src.application.schemas.products import CreateProductSchema, ProductSchema
 from src.application.schemas.prices import CreatePriceSchema
 from src.application.schemas.images import CreateImageSchema, ImageSchema
-from src.infra.postgres.tables import MacrosModel, DrinksModel, PricesModel, ImagesModel
+from src.infra.postgres.tables import MacrosModel, ProductsModel, PricesModel, ImagesModel
 from src.infra.minio.get import GetImg
 from dataclasses import dataclass
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class CreateDrinkUsecase(Usecase[RequestDrink, ResponseAllDrink]):
+class CreateProductUsecase(Usecase[RequestProduct, ResponseProduct]):
     session: AsyncSession
     create_macros: CreateReturningGate[MacrosModel, CreateMacrosSchema, MacrosSchema]
-    create_drink: CreateReturningGate[DrinksModel, CreateDrinkSchema, DrinkSchema]
+    create_product: CreateReturningGate[ProductsModel, CreateProductSchema, ProductSchema]
     create_price: CreateReturningGate[PricesModel, CreatePriceSchema, ApiPriceSchema]
     create_image: CreateReturningGate[ImagesModel, CreateImageSchema, ImageSchema]
     get_img: GetImg
 
-    async def __call__(self, data: RequestDrink) -> ResponseAllDrink:
+    async def __call__(self, data: RequestProduct) -> ResponseProduct:
         async with self.session.begin():
             macros = await self.create_macros(CreateMacrosSchema(
                 unit_kkal=data.unit_kkal,
@@ -28,7 +28,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseAllDrink]):
                 unit_fats=data.unit_fats
             ))
 
-            drink = await self.create_drink(CreateDrinkSchema(
+            drink = await self.create_product(CreateProductSchema(
                 name=data.name,
                 description=data.description,
                 is_available=data.is_available,
@@ -51,7 +51,7 @@ class CreateDrinkUsecase(Usecase[RequestDrink, ResponseAllDrink]):
                 prices.append(result)
 
 
-        return ResponseAllDrink(
+        return ResponseProduct(
             id=drink.id,
             name=drink.name,
             description=drink.description,

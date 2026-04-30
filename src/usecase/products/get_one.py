@@ -1,23 +1,21 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from uuid import UUID
-from src.infra.postgres.gateways.drinks import GetDrinksByIdGateway
-from src.usecase.drinks.schemas import ResponseDrink, ResponseOneDrink, MacrosSchema
-from src.infra.postgres.gateways.images import GetImageDrinkNameGateway
-from src.application.schemas.common import ResponsePaginationSchema, RequestPaginationSchema
-from src.application.services.pagination import Pagination
+from src.infra.postgres.gateways.products import GetProductByIdGateway
+from src.usecase.products.schemas import ResponseProduct, MacrosSchema
+from src.infra.postgres.gateways.images import GetImageNameGateway
 from dataclasses import dataclass
 from src.infra.minio.get import GetImg
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class GetDrinkByIdUsecase(Usecase[UUID, ResponseOneDrink]):
+class GetDrinkByIdUsecase(Usecase[UUID, ResponseProduct]):
     session: AsyncSession
-    get_drink: GetDrinksByIdGateway
-    get_img_url: GetImageDrinkNameGateway
+    get_drink: GetProductByIdGateway
+    get_img_url: GetImageNameGateway
     get_img: GetImg
 
-    async def __call__(self, data_id: UUID) -> ResponseOneDrink:
+    async def __call__(self, data_id: UUID) -> ResponseProduct:
         async with self.session.begin():
             drink = await self.get_drink(data_id=data_id)
             drink.image_url = await self.get_img_url(drink.id)
@@ -32,7 +30,7 @@ class GetDrinkByIdUsecase(Usecase[UUID, ResponseOneDrink]):
                     unit_carbs=drink.unit_carbs * i.volume / 100,
                     unit_proteins=drink.unit_proteins * i.volume / 100,
                 ))
-            return ResponseOneDrink(
+            return ResponseProduct(
                 id=drink.id,
                 name = drink.name,
                 description=drink.description,

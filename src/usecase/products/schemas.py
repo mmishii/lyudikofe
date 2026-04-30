@@ -7,7 +7,7 @@ class ApiPriceSchema(BaseModel):
     price: float
 
 
-class RequestDrink(BaseModel):
+class RequestProduct(BaseModel):
     name: str
     description: str|None = None
     ingredients: str|None = None
@@ -22,19 +22,6 @@ class RequestDrink(BaseModel):
     unit_fats: float
 
 
-class ResponseDrink(BaseModel):
-    id: UUID
-    name: str
-    description: str | None = None
-    ingredients: str | None = None
-    prices: list[ApiPriceSchema]
-    is_available: bool
-    category: str | None = None
-    season: str | None = None
-    image_url: str
-    created_at: datetime
-    updated_at: datetime
-
 class MacrosSchema(BaseModel):
     volume: int
     price: float
@@ -43,7 +30,7 @@ class MacrosSchema(BaseModel):
     unit_carbs: float
     unit_fats: float
 
-class ResponseOneDrink(BaseModel):
+class ResponseProducts(BaseModel):
     id: UUID
     name: str
     description: str | None = None
@@ -58,7 +45,7 @@ class ResponseOneDrink(BaseModel):
 
 
 
-class ResponseAllDrink(ResponseDrink):
+class ResponseProduct(ResponseProducts):
     macros_id: UUID
     unit_kkal: float
     unit_proteins: float

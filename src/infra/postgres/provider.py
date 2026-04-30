@@ -12,8 +12,7 @@ from src.infra.postgres.gateways.base import UpdateGate
 from src.infra.postgres.gateways.base import UpdateReturningGate
 from src.infra.postgres.gateways.base import DeleteGate
 from src.infra.postgres.gateways.base import DeleteReturningGate
-from src.infra.postgres.gateways.drinks import GetDrinksGateway, GetDrinksByIdGateway
-from src.infra.postgres.gateways.foods import GetFoodsGateway, GetFoodsByIdGateway
+from src.infra.postgres.gateways.products import GetProductsGateway, GetProductByIdGateway
 from src.infra.postgres.gateways.images import GetImageNameGateway
 from src.infra.postgres.gateways.ingredients import GetIngredientsGateway, GetIngredientByIdGateway
 
@@ -166,12 +165,9 @@ class PostgresProvider(Provider):
         )
 
     _get_usecases = provide_all(
-        GetDrinksGateway,
-        GetFoodsGateway,
         GetImageNameGateway,
         GetIngredientsGateway,
-        GetDrinksByIdGateway,
-        GetFoodsByIdGateway,
-        GetDrinksByIdGateway,
+        GetProductsGateway,
+        GetProductByIdGateway,
         GetIngredientByIdGateway,
     )
