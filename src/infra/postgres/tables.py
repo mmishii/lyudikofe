@@ -91,19 +91,113 @@ class OrdersModel(BaseDBModel):
         ForeignKey("db_schema.statuses.name"),
         nullable=False,
     )
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     comment: Mapped[str] = mapped_column(Text, nullable=True)
     payment_method: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
 
+# Корзина
+class CartsModel(BaseDBModel):
+    __tablename__ = 'carts'
+    id: Mapped[uuid_pk]
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.users.id"),
+        nullable=False,
+    )
+    count: Mapped[int] = mapped_column(Integer, nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
 # Закз продуктов
-class OrderProductsModel(BaseDBModel):
-    __tablename__ = 'order_products'
+class CartDrinksModel(BaseDBModel):
+    __tablename__ = 'cart_drinks'
+    id: Mapped[uuid_pk]
+    cart_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.carts.id"),
+        nullable=False,
+    )
+    drink_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
+    )
+
+    unit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+# Закз продуктов
+class CartFoodsModel(BaseDBModel):
+    __tablename__ = 'cart_foods'
+    id: Mapped[uuid_pk]
+    cart_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.carts.id"),
+        nullable=False,
+    )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
+    )
+    unit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+# Закз продуктов
+class OrderDrinksModel(BaseDBModel):
+    __tablename__ = 'order_drinks'
     id: Mapped[uuid_pk]
     order_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.orders.id"),
+        nullable=False,
+    )
+    drink_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.drinks.id"),
+        nullable=True,
+    )
+    unit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+class OrderFoodsModel(BaseDBModel):
+    __tablename__ = 'order_foods'
+    id: Mapped[uuid_pk]
+    order_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.orders.id"),
+        nullable=False,
+    )
+    food_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.food.id"),
+        nullable=True,
+    )
+    unit_price: Mapped[float] = mapped_column(Float, nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+# Закз продуктов
+class CartsProductsModel(BaseDBModel):
+    __tablename__ = 'carts_products'
+    id: Mapped[uuid_pk]
+    cart_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.carts.id"),
         nullable=False,
     )
     drink_id: Mapped[uuid.UUID] = mapped_column(
@@ -143,8 +237,8 @@ class CustomsModel(BaseDBModel):
 
 
 # Изображения
-class ImagesModel(BaseDBModel):
-    __tablename__ = 'images'
+class ImageDrinksModel(BaseDBModel):
+    __tablename__ = 'images_drinks'
     id: Mapped[uuid_pk]
 
     drink_id: Mapped[uuid.UUID] = mapped_column(
@@ -152,6 +246,15 @@ class ImagesModel(BaseDBModel):
         ForeignKey("db_schema.drinks.id"),
         nullable=True,
     )
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
+
+
+# Изображения
+class ImageFoodsModel(BaseDBModel):
+    __tablename__ = 'images_foods'
+    id: Mapped[uuid_pk]
     food_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.food.id"),
