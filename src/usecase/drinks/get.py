@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.usecase.base import Usecase
 from src.infra.postgres.gateways.drinks import GetDrinksGateway
 from src.usecase.drinks.schemas import ResponseDrink
-from src.infra.postgres.gateways.images import GetImageNameGateway
+from src.infra.postgres.gateways.images import GetImageDrinkNameGateway
 from src.application.schemas.common import ResponsePaginationSchema, RequestPaginationSchema
 from src.application.services.pagination import Pagination
 from dataclasses import dataclass
@@ -13,7 +13,7 @@ class GetDrinksUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchema
     session: AsyncSession
     get_drink: GetDrinksGateway
     pagination: Pagination[ResponseDrink]
-    get_img_url: GetImageNameGateway
+    get_img_url: GetImageDrinkNameGateway
     get_img: GetImg
     
     async def __call__(self, data: RequestPaginationSchema) -> ResponsePaginationSchema[ResponseDrink]:

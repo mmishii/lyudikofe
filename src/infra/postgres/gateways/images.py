@@ -1,11 +1,8 @@
-from http.client import responses
-
 from sqlalchemy.ext.asyncio import AsyncSession
 from dataclasses import dataclass
 from uuid import UUID
-from src.infra.postgres.tables import FoodModel, MacrosModel, PricesModel, ImagesModel
-from src.usecase.food.schemas import ResponseFood
-from sqlalchemy import select, or_, literal
+from src.infra.postgres.tables import ImageFoodsModel, ImageDrinksModel
+from sqlalchemy import select
 from src.application.errors import NotFoundError
 
 
@@ -15,14 +12,24 @@ class PostgresGateway:
 
 
 @dataclass(slots=True, kw_only=True)
-class GetImageNameGateway(PostgresGateway):
-    async def __call__(self, id_product: UUID) -> str:
-        stmt = select(ImagesModel.name,
-                      ImagesModel.drink_id,
-                      ImagesModel.food_id).where(or_(
-                        ImagesModel.drink_id == id_product,
-                        ImagesModel.food_id == id_product,
-                    ))
+class GetImageDrinkNameGateway(PostgresGateway):
+    async def __call__(self, product_id: UUID) -> str:
+        stmt = select(ImageDrinksModel.name,
+                      ImageDrinksModel.drink_id).where(
+                        ImagesModel.drink_id == product_id,
+                    )
+        result = (await self.session.execute(stmt)).mappings().fetchone()
+        if result is None:
+            raise NotFoundError(table=ImagesModel)
+        return result.name
+
+@dataclass(slots=True, kw_only=True)
+class GetImageFoodNameGateway(PostgresGateway):
+    async def __call__(self, product_id: UUID) -> str:
+        stmt = select(ImageFoodsModel.name,
+                      ImageFoodsModel.food_id).where(
+                        ImageFoodsModel.food_id == product_id,
+                    )
         result = (await self.session.execute(stmt)).mappings().fetchone()
         if result is None:
             raise NotFoundError(table=ImagesModel)

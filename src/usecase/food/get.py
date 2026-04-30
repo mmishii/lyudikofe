@@ -4,7 +4,7 @@ from src.infra.postgres.gateways.foods import GetFoodsGateway
 from src.usecase.food.schemas import ResponseFood
 from src.application.schemas.common import ResponsePaginationSchema, RequestPaginationSchema
 from src.application.services.pagination import Pagination
-from src.infra.postgres.gateways.images import GetImageNameGateway
+from src.infra.postgres.gateways.images import GetImageDrinkNameGateway
 from src.infra.minio.get import GetImg
 from dataclasses import dataclass
 
@@ -14,7 +14,7 @@ class GetFoodUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchema[R
     session: AsyncSession
     get_foods: GetFoodsGateway
     pagination: Pagination[ResponseFood]
-    get_img: GetImageNameGateway
+    get_img: GetImageDrinkNameGateway
     get_img_url: GetImg
 
     async def __call__(self, data: RequestPaginationSchema) -> ResponsePaginationSchema[ResponseFood]:

@@ -3,7 +3,7 @@ from src.usecase.base import Usecase
 from uuid import UUID
 from src.infra.postgres.gateways.foods import GetFoodsByIdGateway
 from src.usecase.food.schemas import ResponseAllFood
-from src.infra.postgres.gateways.images import GetImageNameGateway
+from src.infra.postgres.gateways.images import GetImageFoodNameGateway
 from dataclasses import dataclass
 from src.infra.minio.get import GetImg
 
@@ -12,7 +12,7 @@ from src.infra.minio.get import GetImg
 class GetFoodByIdUsecase(Usecase[UUID, ResponseAllFood]):
     session: AsyncSession
     get_food: GetFoodsByIdGateway
-    get_img_url: GetImageNameGateway
+    get_img_url: GetImageFoodNameGateway
     get_img: GetImg
 
     async def __call__(self, data_id: UUID) -> ResponseAllFood:

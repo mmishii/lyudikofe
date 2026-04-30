@@ -3,7 +3,7 @@ from src.usecase.base import Usecase
 from uuid import UUID
 from src.infra.postgres.gateways.drinks import GetDrinksByIdGateway
 from src.usecase.drinks.schemas import ResponseDrink, ResponseOneDrink, MacrosSchema
-from src.infra.postgres.gateways.images import GetImageNameGateway
+from src.infra.postgres.gateways.images import GetImageDrinkNameGateway
 from src.application.schemas.common import ResponsePaginationSchema, RequestPaginationSchema
 from src.application.services.pagination import Pagination
 from dataclasses import dataclass
@@ -14,7 +14,7 @@ from src.infra.minio.get import GetImg
 class GetDrinkByIdUsecase(Usecase[UUID, ResponseOneDrink]):
     session: AsyncSession
     get_drink: GetDrinksByIdGateway
-    get_img_url: GetImageNameGateway
+    get_img_url: GetImageDrinkNameGateway
     get_img: GetImg
 
     async def __call__(self, data_id: UUID) -> ResponseOneDrink:
