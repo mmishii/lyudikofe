@@ -101,7 +101,7 @@ class OrdersModel(BaseDBModel):
 # Корзина
 
 # Закз продуктов
-class CartProductsModel(BaseDBModel):
+class CartModel(BaseDBModel):
     __tablename__ = 'cart_products'
     id: Mapped[uuid_pk]
     user_id: Mapped[uuid.UUID] = mapped_column(

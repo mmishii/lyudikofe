@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
 
-class CartDrinkSchema(BaseModel):
+class CartProductsSchema(BaseModel):
     id: UUID
     user_id: UUID
     drink_id: UUID
@@ -10,7 +10,7 @@ class CartDrinkSchema(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-class CreateCartDrinkSchema(BaseModel):
+class CreateCartProductsSchema(BaseModel):
     user_id: UUID
     drink_id: UUID
     quantity: UUID
