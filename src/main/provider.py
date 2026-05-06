@@ -12,14 +12,15 @@ from src.config import DatabaseConfig
 
 from src.usecase.users.create import CreateUserUsecase
 from src.usecase.users.get import GetUserUsecase
-from src.usecase.products.get import GetDrinksUsecase
+from src.usecase.products.get import GetProductUsecase
 from src.usecase.products.create import CreateProductUsecase
-from src.usecase.products.get_one import GetDrinkByIdUsecase
+from src.usecase.products.get_one import GetProductByIdUsecase
 from src.usecase.categories.create import CreateCategoryUsecase
 from src.usecase.seazons.create import CreateSeasonUsecase
 from src.infra.minio.get import GetImg
-from src.usecase.ingredients.get import GetIngredientsUsecase
-from src.usecase.ingredients.get_one import GetIngredientByIdUsecase
+from src.usecase.carts.create import CreateCartUsecase
+from src.usecase.carts.get import GetCartUsecase
+from src.usecase.carts.delete import DeleteCartUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -40,13 +41,14 @@ class MainProvider(Provider):
         CreateUserUsecase,
         GetUserUsecase,
         Pagination,
-        GetDrinksUsecase,
+        GetProductUsecase,
         CreateProductUsecase,
         CreateCategoryUsecase,
         CreateSeasonUsecase,
         GetImg,
-        GetIngredientsUsecase,
-        GetDrinkByIdUsecase,
-        GetIngredientByIdUsecase,
+        GetProductByIdUsecase,
+        CreateCartUsecase,
+        GetCartUsecase,
+        DeleteCartUsecase,
     )
 

@@ -2,16 +2,16 @@ from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
 
-class CartProductsSchema(BaseModel):
+class CartSchema(BaseModel):
     id: UUID
     user_id: UUID
-    drink_id: UUID
-    quantity: UUID
+    product_id: UUID
+    quantity: int
     created_at: datetime
     updated_at: datetime
 
-class CreateCartProductsSchema(BaseModel):
+class CreateCartSchema(BaseModel):
     user_id: UUID
-    drink_id: UUID
-    quantity: UUID
+    product_id: UUID
+    quantity: int
 

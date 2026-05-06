@@ -9,7 +9,7 @@ from dataclasses import dataclass
 from src.infra.minio.get import GetImg
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class GetDrinksUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchema[ResponseProducts]]):
+class GetProductUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchema[ResponseProducts]]):
     session: AsyncSession
     get_products: GetProductsGateway
     pagination: Pagination[ResponseProducts]

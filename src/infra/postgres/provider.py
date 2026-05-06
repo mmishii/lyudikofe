@@ -14,7 +14,7 @@ from src.infra.postgres.gateways.base import DeleteGate
 from src.infra.postgres.gateways.base import DeleteReturningGate
 from src.infra.postgres.gateways.products import GetProductsGateway, GetProductByIdGateway
 from src.infra.postgres.gateways.images import GetImageNameGateway
-from src.infra.postgres.gateways.ingredients import GetIngredientsGateway, GetIngredientByIdGateway
+from src.infra.postgres.gateways.carts import GetCartGateway, GetCartProductGateway, DeleteCartCustomGateway
 
 TTable = TypeVar("TTable")
 TEntity = TypeVar("TEntity")
@@ -166,8 +166,9 @@ class PostgresProvider(Provider):
 
     _get_usecases = provide_all(
         GetImageNameGateway,
-        GetIngredientsGateway,
         GetProductsGateway,
         GetProductByIdGateway,
-        GetIngredientByIdGateway,
+        GetCartGateway,
+        GetCartProductGateway,
+        DeleteCartCustomGateway,
     )

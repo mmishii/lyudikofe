@@ -9,7 +9,7 @@ from src.infra.minio.get import GetImg
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
-class GetDrinkByIdUsecase(Usecase[UUID, ResponseProduct]):
+class GetProductByIdUsecase(Usecase[UUID, ResponseProduct]):
     session: AsyncSession
     get_drink: GetProductByIdGateway
     get_img_url: GetImageNameGateway
