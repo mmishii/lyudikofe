@@ -15,6 +15,7 @@ from src.infra.postgres.gateways.base import DeleteReturningGate
 from src.infra.postgres.gateways.products import GetProductsGateway, GetProductByIdGateway
 from src.infra.postgres.gateways.images import GetImageNameGateway
 from src.infra.postgres.gateways.carts import GetCartGateway, GetCartProductGateway, DeleteCartCustomGateway
+from src.infra.postgres.gateways.favorites import GetFavoriteGateway, GetCustomFavoriteGateway, GetFavoriteProductGateway, DeleteFavoriteCustomGateway
 
 TTable = TypeVar("TTable")
 TEntity = TypeVar("TEntity")
@@ -171,4 +172,8 @@ class PostgresProvider(Provider):
         GetCartGateway,
         GetCartProductGateway,
         DeleteCartCustomGateway,
+        GetFavoriteGateway,
+        GetCustomFavoriteGateway,
+        GetFavoriteProductGateway,
+        DeleteFavoriteCustomGateway,
     )

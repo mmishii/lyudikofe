@@ -32,7 +32,7 @@ class ProductSchema(BaseModel):
 
 class CustomSchema(BaseModel):
     id: UUID
-    name: UUID
+    name: str | None = None
 
 
 class CustomCartSchema(BaseModel):

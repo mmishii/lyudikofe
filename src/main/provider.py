@@ -23,6 +23,7 @@ from src.usecase.carts.get import GetCartUsecase
 from src.usecase.carts.delete import DeleteCartUsecase
 from src.usecase.favorites.create import CreateFavoriteUsecase
 from src.usecase.favorites.get import GetFavoriteUsecase
+from src.usecase.favorites.delete import DeleteFavoritesUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -54,5 +55,6 @@ class MainProvider(Provider):
         DeleteCartUsecase,
         CreateFavoriteUsecase,
         GetFavoriteUsecase,
+        DeleteFavoritesUsecase,
     )
 

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from dataclasses import dataclass
 from src.infra.postgres.tables import ProductsModel, CartModel, CustomsCartModel, ImagesModel
-from src.usecase.carts.schemas import CartProductsSchema
+from src.usecase.carts.schemas import CartProductsSchema, CustomSchema
 from sqlalchemy import select, func, literal, delete
 from src.application.errors import NotFoundError
 from uuid import UUID
@@ -44,7 +44,7 @@ class GetCartGateway(PostgresGateway):
 
 @dataclass(slots=True, kw_only=True)
 class GetCartProductGateway(PostgresGateway):
-    async def __call__(self, product_id: UUID, user_id: UUID) -> list[CartProductsSchema]:
+    async def __call__(self, product_id: UUID, user_id: UUID) -> UUID:
         stmt = (select(
             CartModel.id,
         )

@@ -53,4 +53,31 @@ class GetCustomFavoriteGateway(PostgresGateway):
             raise NotFoundError(table=FavoriteCostumesModel)
         return [GetCustomFavoritesSchema.model_validate(row) for row in result]
 
-                   
+
+@dataclass(slots=True, kw_only=True)
+class GetFavoriteProductGateway(PostgresGateway):
+    async def __call__(self, product_id: UUID, user_id: UUID) -> UUID:
+        stmt = (select(
+            FavoriteModel.id,
+        )
+        .where(FavoriteModel.product_id == product_id)
+        .where(FavoriteModel.user_id == user_id))
+        
+        result = (await self.session.execute(stmt)).mappings().fetchone()
+
+        return UUID(result.id)
+
+
+@dataclass(slots=True, kw_only=True)
+class DeleteFavoriteCustomGateway(PostgresGateway):
+    async def __call__(self,  favorite_product_id: UUID) -> bool:
+        stmt_custom = delete(FavoriteCostumesModel).where(FavoriteCostumesModel.favorite_id==favorite_product_id)
+        
+        stmt_cart = delete(FavoriteModel).where(FavoriteModel.id==favorite_product_id)
+        try:
+
+            (await self.session.execute(stmt_custom)).mappings().fetchall()
+            (await self.session.execute(stmt_cart)).mappings().fetchall()
+        except:
+            return False
+        return True      
