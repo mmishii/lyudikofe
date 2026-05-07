@@ -21,6 +21,8 @@ from src.infra.minio.get import GetImg
 from src.usecase.carts.create import CreateCartUsecase
 from src.usecase.carts.get import GetCartUsecase
 from src.usecase.carts.delete import DeleteCartUsecase
+from src.usecase.favorites.create import CreateFavoriteUsecase
+from src.usecase.favorites.get import GetFavoriteUsecase
 
 class MainProvider(Provider):
     scope = Scope.REQUEST
@@ -50,5 +52,7 @@ class MainProvider(Provider):
         CreateCartUsecase,
         GetCartUsecase,
         DeleteCartUsecase,
+        CreateFavoriteUsecase,
+        GetFavoriteUsecase,
     )
 
