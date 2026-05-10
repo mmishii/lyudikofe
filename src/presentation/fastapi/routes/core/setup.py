@@ -7,6 +7,7 @@ from src.presentation.fastapi.routes.core.categories.api import ROUTER as CATEGO
 from src.presentation.fastapi.routes.core.seasons.api import ROUTER as SEASONS_ROUTER
 from src.presentation.fastapi.routes.core.carts.api import ROUTER as CARTS_ROUTER
 from src.presentation.fastapi.routes.core.favorites.api import ROUTER as FAVORITES_ROUTER
+from src.presentation.fastapi.routes.core.orders.api import ROUTER as ORDERS_ROUTER
 
 def setup_core_router() -> APIRouter:
     router = APIRouter(route_class=DishkaRoute)
@@ -17,4 +18,5 @@ def setup_core_router() -> APIRouter:
     router.include_router(prefix='/seasons', router=SEASONS_ROUTER)
     router.include_router(prefix='/carts', router=CARTS_ROUTER)
     router.include_router(prefix='/favorites', router=FAVORITES_ROUTER)
+    router.include_router(prefix='/orders', router=ORDERS_ROUTER)
     return router
