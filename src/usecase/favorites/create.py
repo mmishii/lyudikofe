@@ -4,7 +4,7 @@ from src.application.schemas.favorites import FavoritesSchema, CreateFavoritesSc
 from src.application.schemas.custom_favorites import CreateCustomFavoritesSchema, CustomFavoritesSchema
 from src.usecase.base import Usecase
 from src.usecase.favorites.schemas import RequestCreateFavoritesSchema, ResponseCustomFavoritesSchema
-from src.infra.postgres.tables import FavoritesModel, CustomsFavoritesModel
+from src.infra.postgres.tables import FavoriteModel, FavoriteCostumesModel
 from src.infra.postgres.gateways.base import CreateReturningGate
 from dataclasses import dataclass
 
@@ -14,8 +14,8 @@ from dataclasses import dataclass
 class CreateFavoriteUsecase(Usecase[RequestCreateFavoritesSchema, ResponseCustomFavoritesSchema]):
     session: AsyncSession
     user: AuthSchema
-    create_favorite: CreateReturningGate[FavoritesModel, CreateFavoritesSchema, FavoritesSchema]
-    create_custom_favorite: CreateReturningGate[CustomsFavoritesModel, CreateCustomFavoritesSchema, CustomFavoritesSchema]
+    create_favorite: CreateReturningGate[FavoriteModel, CreateFavoritesSchema, FavoritesSchema]
+    create_custom_favorite: CreateReturningGate[FavoriteCostumesModel, CreateCustomFavoritesSchema, CustomFavoritesSchema]
 
     async def __call__(self, data: RequestCreateFavoritesSchema) -> ResponseCustomFavoritesSchema:
         async with self.session.begin():

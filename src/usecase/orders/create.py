@@ -1,12 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.schemas.auth import AuthSchema
 from src.usecase.base import Usecase
+from uuid import UUID
 from dataclasses import dataclass
 from src.usecase.orders.schemas import RequestOrderSchema
 from src.infra.postgres.tables import CustomsOrderModel, OrdersModel, OrderProductsModel
 from src.infra.postgres.gateways.base import CreateReturningGate, DeleteGate
 from src.application.schemas.custom_order import CreateCustomOrderProductSchema, CustomOrderProductSchema
-from src.application.schemas.orders import OrderProductSchema, OrderSchema
+from src.application.schemas.orders import OrderSchema
 from src.application.schemas.order_products import CreateOrderProductSchema, OrderProductSchema
 from src.infra.postgres.tables import CartModel, CustomsCartModel
 from src.usecase.orders.schemas import ResponseOrderSchema, ResponseProductSchema
@@ -20,8 +21,8 @@ class CreateOrderUsecase(Usecase[RequestOrderSchema, ResponseOrderSchema]):
     create_order: CreateReturningGate[OrdersModel, OrderSchema, OrderSchema]
     create_order_product: CreateReturningGate[OrderProductsModel, CreateOrderProductSchema, OrderProductSchema]
     create_custom_order_product: CreateReturningGate[CustomsOrderModel, CreateCustomOrderProductSchema, CustomOrderProductSchema]
-    delete_cart: DeleteGate[CartModel]
-    delete_custom_cart: DeleteGate[CustomsCartModel]
+    delete_cart: DeleteGate[CartModel, UUID]
+    delete_custom_cart: DeleteGate[CustomsCartModel, UUID]
 
 
     async def __call__(self, data: RequestOrderSchema) -> ResponseOrderSchema:
