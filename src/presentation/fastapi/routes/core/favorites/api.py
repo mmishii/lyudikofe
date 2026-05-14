@@ -17,9 +17,9 @@ async def create_favorite(
     data: RequestCreateFavoritesSchema) -> ResponseCustomFavoritesSchema:
     return await usecase(data)
 
-@ROUTER.get('', status_code=200, response_model=ResponseGetFavoritesSchema)
+@ROUTER.get('', status_code=200, response_model=list[ResponseGetFavoritesSchema])
 async def get_favorites(
-    usecase: FromDishka[GetFavoriteUsecase]) -> ResponseGetFavoritesSchema:
+    usecase: FromDishka[GetFavoriteUsecase]) -> list[ResponseGetFavoritesSchema]:
     return await usecase()
 
 @ROUTER.delete('', status_code=200, response_model=bool)

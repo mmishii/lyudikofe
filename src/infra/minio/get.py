@@ -11,7 +11,7 @@ class GetImg:
         session = aioboto3.Session()
         async with session.client(
             "s3",
-            endpoint_url="http://localhost:9000",
+            endpoint_url="http://185.197.75.93:9000",
             aws_access_key_id="minioadmin",
             aws_secret_access_key="minioadmin",
             region_name="us-east-1",

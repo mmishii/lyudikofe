@@ -22,6 +22,7 @@ class CreateFavoriteUsecase(Usecase[RequestCreateFavoritesSchema, ResponseCustom
             favorite = await self.create_favorite(
                 CreateFavoritesSchema(
                     user_id=self.user.id,
+                    price_id=data.price_id,
                     product_id=data.product_id
                 )
             )
@@ -29,8 +30,9 @@ class CreateFavoriteUsecase(Usecase[RequestCreateFavoritesSchema, ResponseCustom
             for ingredient in data.custom:
                 custom = await self.create_custom_favorite(
                     CreateCustomFavoritesSchema(
-                        user_id=self.user.id,
-                        ingredient_id=ingredient.ingredient_id
+                        favorite_id=favorite.id,
+                        ingredient_id=ingredient.ingredient_id,
+                        price_id=ingredient.price_id,
                     )
                 )
                 customs.append(custom)
@@ -38,6 +40,7 @@ class CreateFavoriteUsecase(Usecase[RequestCreateFavoritesSchema, ResponseCustom
             return ResponseCustomFavoritesSchema(
                 id=favorite.id,
                 user_id=favorite.user_id,
+                price_id=favorite.price_id,
                 product_id=favorite.product_id,
                 created_at=str(favorite.created_at),
                 updated_at=str(favorite.updated_at),

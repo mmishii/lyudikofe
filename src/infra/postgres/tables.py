@@ -149,7 +149,7 @@ class CustomsOrderModel(BaseDBModel):
     id: Mapped[uuid_pk]
     ingredient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.ingredients.id"),
+        ForeignKey("db_schema.products.id"),
         nullable=False,
     )
     order_product_id: Mapped[uuid.UUID] = mapped_column(
@@ -167,7 +167,7 @@ class CustomsCartModel(BaseDBModel):
     id: Mapped[uuid_pk]
     ingredient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.ingredients.id"),
+        ForeignKey("db_schema.products.id"),
         nullable=False,
     )
     cart_product_id: Mapped[uuid.UUID] = mapped_column(
@@ -218,7 +218,7 @@ class ProductsModel(BaseDBModel):
 class PricesModel(BaseDBModel):
     __tablename__ = 'prices'
     id: Mapped[uuid_pk]
-
+    
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.products.id"),
@@ -269,9 +269,14 @@ class FavoriteCostumesModel(BaseDBModel):
     id: Mapped[uuid_pk]
     ingredient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("db_schema.ingredients.id"),
+        ForeignKey("db_schema.products.id"),
         nullable=False,
     )
+    
+    price_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.prices.id"),
+        nullable=True,    )
     favorite_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.favorite.id"),
@@ -292,6 +297,10 @@ class FavoriteModel(BaseDBModel):
         nullable=False,
     )
     
+    price_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.prices.id"),
+        nullable=True,    )
     product_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("db_schema.products.id"),

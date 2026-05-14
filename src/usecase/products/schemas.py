@@ -3,6 +3,7 @@ from uuid import UUID
 from datetime import datetime
 
 class ApiPriceSchema(BaseModel):
+    price_id:UUID
     volume: int
     price: float
 
@@ -22,7 +23,8 @@ class RequestProduct(BaseModel):
     unit_fats: float
 
 
-class MacrosSchema(BaseModel):
+class RespopnseMacrosSchema(BaseModel):
+    price_id: UUID
     volume: int
     price: float
     unit_kkal: float
@@ -30,12 +32,26 @@ class MacrosSchema(BaseModel):
     unit_carbs: float
     unit_fats: float
 
+class ResponseOneProduct(BaseModel):
+    id: UUID
+    name: str
+    description: str | None = None
+    ingredients: str | None = None
+    prices: list[RespopnseMacrosSchema]
+    is_available: bool
+    category: str | None = None
+    season: str | None = None
+    image_url: str
+    created_at: datetime
+    updated_at: datetime
+
+
 class ResponseProducts(BaseModel):
     id: UUID
     name: str
     description: str | None = None
     ingredients: str | None = None
-    prices: list[MacrosSchema]
+    prices: list[ApiPriceSchema]
     is_available: bool
     category: str | None = None
     season: str | None = None

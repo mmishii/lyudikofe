@@ -4,7 +4,7 @@ from fastapi import APIRouter, Query
 from uuid import UUID
 from fastapi import status
 from src.application.schemas.common import RequestPaginationSchema, ResponsePaginationSchema
-from src.usecase.products.schemas import ResponseProduct, RequestProduct, ResponseProducts
+from src.usecase.products.schemas import ResponseProduct, RequestProduct, ResponseProducts, ResponseOneProduct
 from src.usecase.products.get import GetProductUsecase
 from src.usecase.products.get_one import GetProductByIdUsecase
 from src.usecase.products.create import CreateProductUsecase
@@ -24,9 +24,9 @@ async def get_drinks(
     pagination: RequestPaginationSchema=Query(...)) -> ResponsePaginationSchema[ResponseProducts]:
     return await usecase(pagination)
 
-@ROUTER.get('/by-id', status_code=status.HTTP_200_OK, response_model=ResponseProduct)
+@ROUTER.get('/by-id', status_code=status.HTTP_200_OK, response_model=ResponseOneProduct)
 async def get_drinks(
     usecase: FromDishka[GetProductByIdUsecase],
-    data_id: UUID=Query(...)) -> ResponseProduct:
+    data_id: UUID=Query(...)) -> ResponseOneProduct:
     return await usecase(data_id)
 

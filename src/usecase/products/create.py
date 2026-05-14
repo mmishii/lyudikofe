@@ -30,6 +30,7 @@ class CreateProductUsecase(Usecase[RequestProduct, ResponseProduct]):
 
             drink = await self.create_product(CreateProductSchema(
                 name=data.name,
+                ingredients=data.ingredients,
                 description=data.description,
                 is_available=data.is_available,
                 category=data.category,
@@ -38,13 +39,13 @@ class CreateProductUsecase(Usecase[RequestProduct, ResponseProduct]):
             ))
             image = await self.create_image(CreateImageSchema(
                 name=data.image_name,
-                drink_id=drink.id,
+                product_id=drink.id,
             ))
             image_url = await self.get_img(image.name)
             prices = []
             for price in data.prices:
                 result = await self.create_price(CreatePriceSchema(
-                    drink_id=drink.id,
+                    product_id=drink.id,
                     price=price.price,
                     volume=price.volume,
                 ))

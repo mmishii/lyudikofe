@@ -7,7 +7,7 @@ class TokenParser:
     async def __call__(self, token: str) -> AuthSchema:
         async with AsyncClient(timeout=30.0) as client:
             headers = {"Authorization": token}
-            response = await client.get("http://fusionauth:9011/api/jwt/validate", headers=headers)
+            response = await client.get("http://185.197.75.93:9011/api/jwt/validate", headers=headers)
             r = response.json()
             logger.info(r["jwt"]["user"])
             return AuthSchema.model_validate(r["jwt"]["user"])

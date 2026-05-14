@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 3371c25621ef
+Revision ID: 078bb6185a9b
 Revises: 
-Create Date: 2026-04-22 10:07:56.163645
+Create Date: 2026-05-11 14:51:25.043017
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '3371c25621ef'
+revision: str = '078bb6185a9b'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -56,62 +56,10 @@ def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('email', sa.String(length=255), nullable=False),
+    sa.Column('phone', sa.Integer(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.PrimaryKeyConstraint('id'),
-    schema='db_schema'
-    )
-    op.create_table('cart',
-    sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('user_id', sa.UUID(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['user_id'], ['db_schema.users.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    schema='db_schema'
-    )
-    op.create_table('drinks',
-    sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('is_available', sa.Boolean(), nullable=False),
-    sa.Column('season', sa.String(length=100), nullable=True),
-    sa.Column('category', sa.String(length=100), nullable=True),
-    sa.Column('macros_id', sa.UUID(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['category'], ['db_schema.categories.name'], ),
-    sa.ForeignKeyConstraint(['macros_id'], ['db_schema.macros.id'], ),
-    sa.ForeignKeyConstraint(['season'], ['db_schema.seasons.name'], ),
-    sa.PrimaryKeyConstraint('id'),
-    schema='db_schema'
-    )
-    op.create_table('food',
-    sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('is_available', sa.Boolean(), nullable=False),
-    sa.Column('category', sa.String(length=100), nullable=True),
-    sa.Column('macros_id', sa.UUID(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['category'], ['db_schema.categories.name'], ),
-    sa.ForeignKeyConstraint(['macros_id'], ['db_schema.macros.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    schema='db_schema'
-    )
-    op.create_table('ingredients',
-    sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('name', sa.String(length=255), nullable=False),
-    sa.Column('description', sa.String(), nullable=True),
-    sa.Column('price', sa.Float(), nullable=False),
-    sa.Column('is_available', sa.Boolean(), nullable=False),
-    sa.Column('category', sa.String(length=100), nullable=True),
-    sa.Column('macros_id', sa.UUID(), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['category'], ['db_schema.categories.name'], ),
-    sa.ForeignKeyConstraint(['macros_id'], ['db_schema.macros.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
@@ -119,6 +67,7 @@ def upgrade() -> None:
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=False),
     sa.Column('status', sa.String(length=255), nullable=False),
+    sa.Column('count', sa.Integer(), nullable=False),
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('comment', sa.Text(), nullable=True),
     sa.Column('payment_method', sa.String(length=255), nullable=False),
@@ -129,13 +78,42 @@ def upgrade() -> None:
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
+    op.create_table('products',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('name', sa.String(length=255), nullable=False),
+    sa.Column('description', sa.String(), nullable=True),
+    sa.Column('ingredients', sa.String(), nullable=True),
+    sa.Column('is_available', sa.Boolean(), nullable=False),
+    sa.Column('season', sa.String(length=100), nullable=True),
+    sa.Column('category', sa.String(length=100), nullable=False),
+    sa.Column('macros_id', sa.UUID(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['category'], ['db_schema.categories.name'], ),
+    sa.ForeignKeyConstraint(['macros_id'], ['db_schema.macros.id'], ),
+    sa.ForeignKeyConstraint(['season'], ['db_schema.seasons.name'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
+    op.create_table('cart_products',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('user_id', sa.UUID(), nullable=False),
+    sa.Column('product_id', sa.UUID(), nullable=True),
+    sa.Column('quantity', sa.Integer(), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['product_id'], ['db_schema.products.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['db_schema.users.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
     op.create_table('customs',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('ingredient_id', sa.UUID(), nullable=False),
     sa.Column('order_product_id', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['ingredient_id'], ['db_schema.ingredients.id'], ),
+    sa.ForeignKeyConstraint(['ingredient_id'], ['db_schema.products.id'], ),
     sa.ForeignKeyConstraint(['order_product_id'], ['db_schema.orders.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
@@ -143,53 +121,56 @@ def upgrade() -> None:
     op.create_table('favorite',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('user_id', sa.UUID(), nullable=False),
-    sa.Column('drink_id', sa.UUID(), nullable=True),
-    sa.Column('food_id', sa.UUID(), nullable=True),
+    sa.Column('product_id', sa.UUID(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['drink_id'], ['db_schema.drinks.id'], ),
-    sa.ForeignKeyConstraint(['food_id'], ['db_schema.food.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['db_schema.products.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['db_schema.users.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
     op.create_table('images',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('drink_id', sa.UUID(), nullable=True),
-    sa.Column('food_id', sa.UUID(), nullable=True),
+    sa.Column('product_id', sa.UUID(), nullable=True),
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['drink_id'], ['db_schema.drinks.id'], ),
-    sa.ForeignKeyConstraint(['food_id'], ['db_schema.food.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['db_schema.products.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
-    op.create_table('order_products',
+    op.create_table('order_drinks',
     sa.Column('id', sa.UUID(), nullable=False),
     sa.Column('order_id', sa.UUID(), nullable=False),
-    sa.Column('drink_id', sa.UUID(), nullable=True),
-    sa.Column('food_id', sa.UUID(), nullable=True),
+    sa.Column('product_id', sa.UUID(), nullable=True),
     sa.Column('unit_price', sa.Float(), nullable=False),
     sa.Column('quantity', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['drink_id'], ['db_schema.drinks.id'], ),
-    sa.ForeignKeyConstraint(['food_id'], ['db_schema.food.id'], ),
     sa.ForeignKeyConstraint(['order_id'], ['db_schema.orders.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['db_schema.products.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
     op.create_table('prices',
     sa.Column('id', sa.UUID(), nullable=False),
-    sa.Column('drink_id', sa.UUID(), nullable=True),
-    sa.Column('food_id', sa.UUID(), nullable=True),
+    sa.Column('product_id', sa.UUID(), nullable=True),
     sa.Column('price', sa.Float(), nullable=False),
     sa.Column('volume', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
-    sa.ForeignKeyConstraint(['drink_id'], ['db_schema.drinks.id'], ),
-    sa.ForeignKeyConstraint(['food_id'], ['db_schema.food.id'], ),
+    sa.ForeignKeyConstraint(['product_id'], ['db_schema.products.id'], ),
+    sa.PrimaryKeyConstraint('id'),
+    schema='db_schema'
+    )
+    op.create_table('custom_cart',
+    sa.Column('id', sa.UUID(), nullable=False),
+    sa.Column('ingredient_id', sa.UUID(), nullable=False),
+    sa.Column('cart_product_id', sa.UUID(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
+    sa.ForeignKeyConstraint(['cart_product_id'], ['db_schema.cart_products.id'], ),
+    sa.ForeignKeyConstraint(['ingredient_id'], ['db_schema.products.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
@@ -200,7 +181,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['favorite_id'], ['db_schema.favorite.id'], ),
-    sa.ForeignKeyConstraint(['ingredient_id'], ['db_schema.ingredients.id'], ),
+    sa.ForeignKeyConstraint(['ingredient_id'], ['db_schema.products.id'], ),
     sa.PrimaryKeyConstraint('id'),
     schema='db_schema'
     )
@@ -211,16 +192,15 @@ def downgrade() -> None:
     """Downgrade schema."""
     # ### commands auto generated by Alembic - please adjust! ###
     op.drop_table('favorite_customs', schema='db_schema')
+    op.drop_table('custom_cart', schema='db_schema')
     op.drop_table('prices', schema='db_schema')
-    op.drop_table('order_products', schema='db_schema')
+    op.drop_table('order_drinks', schema='db_schema')
     op.drop_table('images', schema='db_schema')
     op.drop_table('favorite', schema='db_schema')
     op.drop_table('customs', schema='db_schema')
+    op.drop_table('cart_products', schema='db_schema')
+    op.drop_table('products', schema='db_schema')
     op.drop_table('orders', schema='db_schema')
-    op.drop_table('ingredients', schema='db_schema')
-    op.drop_table('food', schema='db_schema')
-    op.drop_table('drinks', schema='db_schema')
-    op.drop_table('cart', schema='db_schema')
     op.drop_table('users', schema='db_schema')
     op.drop_table('statuses', schema='db_schema')
     op.drop_table('seasons', schema='db_schema')

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from dataclasses import dataclass
-from src.infra.postgres.tables import ProductsModel, FavoriteModel, ImagesModel, FavoriteCostumesModel
+from src.infra.postgres.tables import ProductsModel, FavoriteModel, ImagesModel, FavoriteCostumesModel, PricesModel
 from src.usecase.favorites.schemas import GetFavoritesSchema, GetCustomFavoritesSchema
 from sqlalchemy import select, func, literal, delete
 from src.application.errors import NotFoundError
@@ -16,19 +16,22 @@ class GetFavoriteGateway(PostgresGateway):
         stmt = (select(
                 FavoriteModel.id,
                 FavoriteModel.user_id,
-                func.concat(
-                    ProductsModel.id,
-                    ProductsModel.name,
-                    ProductsModel.price,
-                    ProductsModel.is_available,
-                    ImagesModel.name
-                ).label('products'),
+                func.json_build_object(
+                        "id", ProductsModel.id,
+                        "name", ProductsModel.name,
+                        "is_available", ProductsModel.is_available,
+                        "image_url", ImagesModel.name,
+                        "price", PricesModel.price,
+                        "volume", PricesModel.volume,
+                    )
+                .label("products"),
                 FavoriteModel.created_at,
-                FavoriteModel.updated_at
-            )
+                FavoriteModel.updated_at)
             .join(FavoriteModel, FavoriteModel.product_id == ProductsModel.id)
             .join(ImagesModel, ImagesModel.product_id == ProductsModel.id)
-            .where(FavoriteModel.user_id == user_id))
+            .join(PricesModel, PricesModel.id == FavoriteModel.price_id)
+            .where(FavoriteModel.user_id == user_id)
+        )
 
 
         result = (await self.session.execute(stmt)).mappings().fetchall()
@@ -43,9 +46,13 @@ class GetCustomFavoriteGateway(PostgresGateway):
     async def __call__(self, favorite_id: UUID) -> list[GetCustomFavoritesSchema]:
         stmt = (select(
                 FavoriteCostumesModel.ingredient_id,
+                (PricesModel.id).label("price_id"),
+                PricesModel.price,
+                PricesModel.volume,
                 ProductsModel.name
             )
             .join(ProductsModel, ProductsModel.id == FavoriteCostumesModel.ingredient_id)
+            .join(PricesModel, PricesModel.id == FavoriteCostumesModel.price_id)
             .where(FavoriteCostumesModel.favorite_id == favorite_id))
 
         result = (await self.session.execute(stmt)).mappings().fetchall()
