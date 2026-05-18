@@ -17,4 +17,4 @@ class DeleteFavoritesUsecase(Usecase[UUID, bool]):
     async def __call__(self, product_id: UUID) -> bool:
         async with self.session.begin():
             favorite_id = await self.get_favorite_product_gate(product_id=product_id, user_id=self.user.id)
-            return await self.delete_favorite_custom_gate(favorite_product_id=favorite_id, user_id=self.user.id)
+            return await self.delete_favorite_custom_gate(favorite_product_id=favorite_id)

@@ -8,11 +8,11 @@ T = TypeVar('T', bound=BaseModel)
 
 @dataclass(slots=True, frozen=True, kw_only=True)
 class Pagination(Generic[T]):
-    def __call__(self, items: list[T], limit: int, offset: int, schema_class: Type[T]) -> ResponsePaginationSchema:
+    def __call__(self, items: list[T], limit: int, offset: int, revers: bool, schema_class: Type[T]) -> ResponsePaginationSchema:
         items = sorted(
             items,
             key=lambda x: x.created_at,
-            reverse=True
+            reverse=revers
         )
         if offset - limit > 0:
             left_limit = limit

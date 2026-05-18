@@ -5,6 +5,7 @@ from src.usecase.favorites.schemas import GetFavoritesSchema, GetCustomFavorites
 from sqlalchemy import select, func, literal, delete
 from src.application.errors import NotFoundError
 from uuid import UUID
+from loguru import logger
 
 @dataclass(slots=True, kw_only=True)
 class PostgresGateway:
@@ -21,6 +22,7 @@ class GetFavoriteGateway(PostgresGateway):
                         "name", ProductsModel.name,
                         "is_available", ProductsModel.is_available,
                         "image_url", ImagesModel.name,
+                        "price_id", PricesModel.id,
                         "price", PricesModel.price,
                         "volume", PricesModel.volume,
                     )
@@ -53,11 +55,13 @@ class GetCustomFavoriteGateway(PostgresGateway):
             )
             .join(ProductsModel, ProductsModel.id == FavoriteCostumesModel.ingredient_id)
             .join(PricesModel, PricesModel.id == FavoriteCostumesModel.price_id)
+            .join(FavoriteModel, FavoriteModel.id == FavoriteCostumesModel.favorite_id)
             .where(FavoriteCostumesModel.favorite_id == favorite_id))
 
         result = (await self.session.execute(stmt)).mappings().fetchall()
         if result is None:
             raise NotFoundError(table=FavoriteCostumesModel)
+        logger.info(result)
         return [GetCustomFavoritesSchema.model_validate(row) for row in result]
 
 
@@ -72,7 +76,7 @@ class GetFavoriteProductGateway(PostgresGateway):
         
         result = (await self.session.execute(stmt)).mappings().fetchone()
 
-        return UUID(result.id)
+        return result.id
 
 
 @dataclass(slots=True, kw_only=True)

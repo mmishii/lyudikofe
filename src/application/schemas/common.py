@@ -20,6 +20,7 @@ class PaginationSchema(BaseModel):
 
 class RequestPaginationSchema(PaginationSchema):
     category: str
+    season: str | None = None
 
 T = TypeVar('T', bound=BaseModel)
 

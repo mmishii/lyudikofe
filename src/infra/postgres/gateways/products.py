@@ -13,7 +13,7 @@ class PostgresGateway:
 
 @dataclass(slots=True, kw_only=True)
 class GetProductsGateway(PostgresGateway):
-    async def __call__(self, category: str) -> list[ResponseProducts]:
+    async def __call__(self, category: str, season:str | None = None) -> list[ResponseProducts]:
         stmt = (select(
                 ProductsModel.id,
                 ProductsModel.name,
@@ -38,8 +38,8 @@ class GetProductsGateway(PostgresGateway):
             )
             .join(PricesModel, PricesModel.product_id == ProductsModel.id)
             .join(ImagesModel, ImagesModel.product_id == ProductsModel.id)
+
             .where(ProductsModel.category==category)
-            .order_by(ProductsModel.created_at.asc())
             .group_by(
                 ProductsModel.id,
                 ProductsModel.name,
@@ -53,6 +53,8 @@ class GetProductsGateway(PostgresGateway):
                 ProductsModel.updated_at
             ))
 
+        if season is not None and season != "null" and season != "":
+            stmt = stmt.where(ProductsModel.season == season)
         result = (await self.session.execute(stmt)).mappings().fetchall()
         logger.info(result)
         if result is None:

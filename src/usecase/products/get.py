@@ -18,7 +18,7 @@ class GetProductUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchem
     
     async def __call__(self, data: RequestPaginationSchema) -> ResponsePaginationSchema[ResponseProducts]:
         async with self.session.begin():
-            products = await self.get_products(category=data.category)
+            products = await self.get_products(category=data.category, season=data.season)
             for i in range(len(products)):
                 products[i].image_url = await self.get_img_url(products[i].id)
                 products[i].image_url = await self.get_img(products[i].image_url)
@@ -26,5 +26,6 @@ class GetProductUsecase(Usecase[RequestPaginationSchema, ResponsePaginationSchem
                 items=products,
             limit=data.limit,
             offset=data.offset,
+            revers=False,
             schema_class=ResponseProducts)
             

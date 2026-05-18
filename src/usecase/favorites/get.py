@@ -6,6 +6,7 @@ from uuid import UUID
 from src.infra.postgres.gateways.favorites import GetFavoriteGateway, GetCustomFavoriteGateway
 from src.usecase.favorites.schemas import ResponseGetFavoritesSchema, GetFavorioteProductsSchema
 from src.infra.minio.get import GetImg
+from loguru import logger
 
 
 @dataclass(slots=True, frozen=True, kw_only=True)
@@ -23,6 +24,7 @@ class GetFavoriteUsecase(Usecase[None, list[ResponseGetFavoritesSchema]]):
             favorites_with_customs = []
             for favorite in favorites:
                 custom_favorites = await self.get_custom_favorites(favorite.id)
+                logger.info(custom_favorites)
                 favorite.products.image_url = await self.get_img(favorite.products.image_url)
                 favorites_with_customs.append(
                     ResponseGetFavoritesSchema(

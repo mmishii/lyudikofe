@@ -1,11 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.schemas.auth import AuthSchema
+from uuid import UUID
 from src.usecase.base import Usecase
-from src.infra.postgres.tables import CartModel, CustomsCartModel
-from src.infra.postgres.gateways.base import CreateReturningGate
+from src.infra.postgres.tables import CartModel, CustomsCartModel, ProductsModel
+from src.infra.postgres.gateways.base import CreateReturningGate, GetByIdGate
 from src.application.schemas.carts import CreateCartSchema, CartSchema
 from src.application.schemas.custom_cart_products import CreateCustomCartSchema, CustomCartSchema
 from src.usecase.carts.schemas import RequestCartProducts, ResponseCartProducts
+from src.application.schemas.products import ProductSchema
 from dataclasses import dataclass
 
 
@@ -16,10 +18,11 @@ class CreateCartUsecase(Usecase[RequestCartProducts, ResponseCartProducts]):
     user: AuthSchema
     create_cart: CreateReturningGate[CartModel, CreateCartSchema, CartSchema]
     create_custom_cart: CreateReturningGate[CustomsCartModel, CreateCustomCartSchema, CustomCartSchema]
+    get_product: GetByIdGate[ProductsModel, UUID, ProductSchema]
 
     async def __call__(self, data: RequestCartProducts) -> ResponseCartProducts:
         async with self.session.begin():
-            # создание записи в самой корзине
+            product = await self.get_product(data.product_id)
             cart = await self.create_cart(
                 CreateCartSchema(
                     user_id=self.user.id,

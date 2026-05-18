@@ -10,5 +10,5 @@ class CustomCartSchema(BaseModel):
     updated_at: datetime
 
 class CreateCustomCartSchema(BaseModel):
-    cart_drink_id: UUID
+    cart_product_id: UUID
     ingredient_id: UUID
