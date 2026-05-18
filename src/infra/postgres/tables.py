@@ -114,6 +114,11 @@ class CartModel(BaseDBModel):
         ForeignKey("db_schema.products.id"),
         nullable=True,
     )
+    price_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.prices.id"),
+        nullable=True,
+    )
     quantity: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]
@@ -174,6 +179,11 @@ class CustomsCartModel(BaseDBModel):
         UUID(as_uuid=True),
         ForeignKey("db_schema.cart_products.id"),
         nullable=False,
+    )
+    price_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("db_schema.prices.id"),
+        nullable=True,
     )
     created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]

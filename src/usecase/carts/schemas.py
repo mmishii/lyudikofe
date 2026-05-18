@@ -6,10 +6,12 @@ from src.usecase import products
 
 class RequestCustomCartProducts(BaseModel):
     ingredient_id: UUID
+    price_id: UUID
 
 class RequestCartProducts(BaseModel):
     product_id: UUID
     quantity: int
+    price_id: UUID
     customs: list[RequestCustomCartProducts]
 
 
@@ -17,6 +19,7 @@ class ResponseCartProducts(BaseModel):
     id: UUID
     user_id: UUID
     product_id: UUID
+    price_id: UUID
     customs: list[CustomCartSchema]|None = None
     quantity: int
     created_at: str
@@ -37,6 +40,7 @@ class CustomSchema(BaseModel):
 
 class CustomCartSchema(BaseModel):
     ingredient_id: UUID
+    price_id: UUID
 
 class CartProductsSchema(BaseModel):
     id: UUID

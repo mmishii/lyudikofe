@@ -6,6 +6,7 @@ class CartSchema(BaseModel):
     id: UUID
     user_id: UUID
     product_id: UUID
+    price_id: UUID
     quantity: int
     created_at: datetime
     updated_at: datetime
@@ -13,5 +14,6 @@ class CartSchema(BaseModel):
 class CreateCartSchema(BaseModel):
     user_id: UUID
     product_id: UUID
+    price_id: UUID
     quantity: int
 

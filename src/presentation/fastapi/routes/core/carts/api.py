@@ -13,10 +13,10 @@ from src.usecase.carts.delete import DeleteCartUsecase
 
 ROUTER = APIRouter(route_class=DishkaRoute)
 
-@ROUTER.post('', status_code=status.HTTP_200_OK, response_model=ResponseCartProducts)
+@ROUTER.post('', status_code=status.HTTP_200_OK, response_model=ResponseCartProducts|None)
 async def create_cart(
     usecase: FromDishka[CreateCartUsecase],
-    cart_products: RequestCartProducts) -> ResponseCartProducts:
+    cart_products: RequestCartProducts) -> ResponseCartProducts|None:
     return await usecase(cart_products)
 
 @ROUTER.get('', status_code=status.HTTP_200_OK, response_model=ResponseCartProductsSchema)

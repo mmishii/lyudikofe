@@ -26,8 +26,7 @@ class GetFavorioteProductsSchema(BaseModel):
     image_url: str
     name: str
     is_available: bool
-    image_url: str
-    price_id: float
+    price_id: UUID
     price: float
     volume: int
 

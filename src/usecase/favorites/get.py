@@ -35,6 +35,7 @@ class GetFavoriteUsecase(Usecase[None, list[ResponseGetFavoritesSchema]]):
                             image_url=favorite.products.image_url,
                             name=favorite.products.name,
                             is_available=favorite.products.is_available,
+                            price_id=favorite.products.price_id,
                             price=favorite.products.price,
                             volume=favorite.products.volume
                         ),

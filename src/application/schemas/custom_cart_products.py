@@ -6,9 +6,11 @@ class CustomCartSchema(BaseModel):
     id: UUID
     cart_product_id: UUID
     ingredient_id: UUID
+    price_id: UUID
     created_at: datetime
     updated_at: datetime
 
 class CreateCustomCartSchema(BaseModel):
     cart_product_id: UUID
     ingredient_id: UUID
+    price_id: UUID
