@@ -6,7 +6,7 @@ from fastapi import APIRouter
 from fastapi import status
 
 from src.usecase.carts.create import CreateCartUsecase
-from src.usecase.carts.schemas import RequestCartProducts, ResponseCartProducts
+from src.usecase.carts.schemas import RequestCartProducts, ResponseCartProducts, CartProductsSchema
 from src.usecase.carts.get import GetCartUsecase
 from src.usecase.carts.schemas import ResponseCartProductsSchema
 from src.usecase.carts.delete import DeleteCartUsecase
@@ -19,15 +19,15 @@ async def create_cart(
     cart_products: RequestCartProducts) -> ResponseCartProducts|None:
     return await usecase(cart_products)
 
-@ROUTER.get('', status_code=status.HTTP_200_OK, response_model=ResponseCartProductsSchema)
+@ROUTER.get('', status_code=status.HTTP_200_OK, response_model=list[CartProductsSchema])
 async def get_cart(
     usecase: FromDishka[GetCartUsecase],
-    ) -> ResponseCartProductsSchema:
+    ) -> list[CartProductsSchema]:
     return await usecase()
 
 @ROUTER.delete('', status_code=status.HTTP_200_OK, response_model=bool)
 async def delete_cart(
     usecase: FromDishka[DeleteCartUsecase],
-    product_id: UUID
+    cart_product_id: UUID
     ) -> bool:
-    return await usecase(product_id=product_id)
+    return await usecase(cart_product_id=cart_product_id)

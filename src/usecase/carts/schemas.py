@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from uuid import UUID
 from src.application.schemas.custom_cart_products import CustomCartSchema
 from src.usecase import products
+from datetime import datetime
 
 
 class RequestCustomCartProducts(BaseModel):
@@ -22,16 +23,25 @@ class ResponseCartProducts(BaseModel):
     price_id: UUID
     customs: list[CustomCartSchema]|None = None
     quantity: int
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
+
+class PriceSchema(BaseModel):
+    id: UUID
+    price: float
+    volume: int
+    created_at: datetime
+    updated_at: datetime
 
 class ProductSchema(BaseModel):
     id: UUID
     name: str
     is_available: bool
-    price: float
-    image: str
-    ingredient_id: UUID|None = None
+    image_url: str
+    price:PriceSchema
+    customs: list[CustomCartSchema]|None = None
+    created_at: datetime
+    updated_at: datetime
 
 class CustomSchema(BaseModel):
     id: UUID
@@ -39,18 +49,21 @@ class CustomSchema(BaseModel):
 
 
 class CustomCartSchema(BaseModel):
+    id: UUID
     ingredient_id: UUID
-    price_id: UUID
+    cart_product_id: UUID
+    price:PriceSchema
+    created_at: datetime
+    updated_at: datetime
 
 class CartProductsSchema(BaseModel):
     id: UUID
     user_id: UUID
     products: ProductSchema
-    image: str
     customs: list[CustomCartSchema]|None = None
     quantity: int
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
 class ResponseProductsSchema(BaseModel):
     id: UUID
@@ -59,11 +72,13 @@ class ResponseProductsSchema(BaseModel):
     is_available: bool
     image: str
     customs: list[CustomSchema]|None = None
+    created_at: datetime
+    updated_at: datetime
 
 class ResponseCartProductsSchema(BaseModel):
     id: UUID
     user_id: UUID
     products: ResponseProductsSchema
     quantity: int
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
